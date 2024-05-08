@@ -3,6 +3,8 @@
 
 # Ignore macOS system files
 .DS_Store
+./Data_Collection/.DS_Store
+./RankingQutputs/.DS_Store
 
 # Ignore virtual environment directories
 venv/
