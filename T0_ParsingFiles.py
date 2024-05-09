@@ -10,7 +10,6 @@ def get_stop_words(filepath):
 
 stop_words = get_stop_words("common-english-words.txt")
 queryfile = "./the50Queries.txt"
-outputT1 = "./PriyaGunda_Q1.txt"
 
 class DataDoc:
     def __init__(self, docID):
