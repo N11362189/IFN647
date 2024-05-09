@@ -1,11 +1,8 @@
 import math, os
 import T0_ParsingFiles as parse
 
-outputT1Folder = "./RankingOutputs"
-data_collection_folder = "./Data_Collection"
-
 # Calculate BM25 IR score for query q with respective coll
-def my_bm25(coll, q, df):
+def bm25(coll, q, df):
     word_freq = parse.parse_query(q)
     scores = {}
     R, ri = 0, 0
@@ -29,6 +26,9 @@ def my_bm25(coll, q, df):
             # base of the log function is 10
             scores[docId] += (math.log(log_val, 10) * k1_attr * k2_attr)
 
+        if scores[docId] < 0:
+            scores[docId] = 0.0
+
     return scores
 
 # task 1 - BM25-based IR model for each data collection with corresponding topic/query.
@@ -37,9 +37,9 @@ if __name__ == "__main__":
     queries = parse.parse_queryfile()
     # print(queries)
 
-    folders = [folder for folder in os.listdir(data_collection_folder)]
+    folders = [folder for folder in os.listdir(parse.data_collection_folder)]
     for folder in folders:
-        coll_folderpath = data_collection_folder + "/" + folder
+        coll_folderpath = parse.data_collection_folder + "/" + folder
         # check if folder length is 9
         if len(folder) == 9:
             coll_num = folder[-3:]
@@ -54,10 +54,10 @@ if __name__ == "__main__":
             df = parse.my_df(collections.get_coll())
 
             # calculate BM25-IR model score for respective data collection
-            bm25_scores = my_bm25(collections, queries[coll_num], df)
+            bm25_scores = bm25(collections, queries[coll_num], df)
 
             # save the rankings for each doc in RankingOutputs folder
-            output_filepath = outputT1Folder + "/BM25_R" + coll_num + "Ranking.dat"
+            output_filepath = parse.outputFolder + "/BM25_R" + coll_num + "Ranking.dat"
             file = open(output_filepath, "w")
             t1_msg = f'\nThe query is: {queries[coll_num]}\nThe following are the BM25 score for each document:\n\n'
             file.write(t1_msg)

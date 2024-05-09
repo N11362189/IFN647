@@ -10,6 +10,8 @@ def get_stop_words(filepath):
 
 stop_words = get_stop_words("common-english-words.txt")
 queryfile = "./the50Queries.txt"
+outputFolder = "./RankingOutputs"
+data_collection_folder = "./Data_Collection"
 
 class DataDoc:
     def __init__(self, docID):
