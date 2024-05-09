@@ -79,6 +79,21 @@ class DataColl:
         file.close()
         return
 
+# parsing a query
+def parse_query(query):
+    curr_word  = dict()
+
+    query = query.translate(str.maketrans('','', string.digits)).translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+    query = re.sub("\s+", " ", query)
+    for term in query.split():
+        term = term.lower()
+        if len(term) > 2 and term not in stop_words:
+            try:
+                curr_word[term] += 1
+            except KeyError:
+                curr_word[term] = 1
+
+    return curr_word
 
 # parsing given query txt file
 def parse_queryfile():
@@ -151,9 +166,8 @@ def my_df(coll):
             docFreq[term] = docFreq.get(term, 0) + 1
     return docFreq
 
-# Calculate and return avg length of all docs in data coll 
+# Calculate and return avg length of all docs in a data coll 
 def avg_length(coll):
     avg_length = coll.getTotalDocLen()/coll.getNumOfDocs()
     coll.setAvgDocLen(avg_length)
     return avg_length
-

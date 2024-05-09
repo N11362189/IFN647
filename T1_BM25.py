@@ -1,7 +1,7 @@
 import math, os
 import T0_ParsingFiles as parse
 
-outputT1Folder = "../RankingOutputs"
+outputT1Folder = "./RankingOutputs"
 data_collection_folder = "./Data_Collection"
 
 # Calculate BM25 IR score for query q with respective coll
@@ -9,7 +9,7 @@ def my_bm25(coll, q, df):
     word_freq = parse.parse_query(q)
     scores = {}
     R, ri = 0, 0
-    k1, k2, b = 1.2, 100, 0.9
+    k1, k2, b = 1.2, 500, 0.75
     N = coll.getNumOfDocs()
     avg_docLen = coll.getAvgDocLen()
 
@@ -26,7 +26,8 @@ def my_bm25(coll, q, df):
             log_val = ((ri+0.5)/(R-ri+0.5)) / ((ni-ri+0.5)/(N-ni-R+ri+0.5))
             k1_attr = ((k1+1)*fi) / (K+fi)    
             k2_attr  = ((k2+1)*qfi) / (k2+qfi)
-            scores[docId] += (math.log(log_val, 2) * k1_attr * k2_attr)
+            # base of the log function is 10
+            scores[docId] += (math.log(log_val, 10) * k1_attr * k2_attr)
 
     return scores
 
@@ -41,10 +42,28 @@ if __name__ == "__main__":
         coll_folderpath = data_collection_folder + "/" + folder
         # check if folder length is 9
         if len(folder) == 9:
-            if folder[-3:] == "150":
-                # parsing documents
-                collections = parse.parse_collection(coll_folderpath)
-                collections.print_and_save()
-                collDocs = collections.get_coll()
-                # calculate document-frequency for given RcvlDoc collection
-                df = parse.my_df(collDocs)
+            coll_num = folder[-3:]
+            print(f"Calculating BM25-IR ranking scores for {folder} data collection")
+            # parsing documents for a collection
+            collections = parse.parse_collection(coll_folderpath)
+
+            # calculate avg doc len for this praticular data collection
+            parse.avg_length(collections)
+
+            # calculate document-frequency for given RcvlDoc collection
+            df = parse.my_df(collections.get_coll())
+
+            # calculate BM25-IR model score for respective data collection
+            bm25_scores = my_bm25(collections, queries[coll_num], df)
+
+            # save the rankings for each doc in RankingOutputs folder
+            output_filepath = outputT1Folder + "/BM25_R" + coll_num + "Ranking.dat"
+            file = open(output_filepath, "w")
+            t1_msg = f'\nThe query is: {queries[coll_num]}\nThe following are the BM25 score for each document:\n\n'
+            file.write(t1_msg)
+
+            for docId, score in dict(sorted(bm25_scores.items(), key=lambda x:x[1], reverse=True)).items():
+                t1_msg = f'{docId} {score}\n'
+                file.write(t1_msg)
+
+    print("Completed!! the ranking scores are saved in RankingOutputs folder ")
