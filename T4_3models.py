@@ -1,7 +1,7 @@
 import math, os
 import T0_ParsingFiles as parse
 
-# Calculate BM25 IR score for query q with respective coll
+# Calculate doc ranking using BM25-based IR Model
 def bm25(coll, q, df):
     word_freq = parse.parse_query(q)
     scores = {}
@@ -31,7 +31,20 @@ def bm25(coll, q, df):
 
     return scores
 
-# task 1 - BM25-based IR model for each data collection with corresponding topic/query.
+
+# Calculate doc ranking using Jelinek-Mercer based Language Model
+def jm_lm(coll, q, df):
+    scores = {}
+    return scores
+
+
+# Calcualte doc ranking using Pseudo-Relevance Model
+def prm(coll, q, df):
+    scores = {}
+    return scores
+
+
+# task 4 - implement all three model for each data collection with corresponding topic/query.
 if __name__ == "__main__":
     # parse 50 queries and save in dict() collId: {query frequency}
     queries = parse.parse_queryfile()
