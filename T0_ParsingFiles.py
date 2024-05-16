@@ -67,18 +67,18 @@ class DataColl:
     def getAvgDocLen(self):
         return self.avgDocLen
     
-    def print_and_save(self):
-        file = open(outputT1, "w")
-        for docId, doc in self.collections.items():
-            terms = doc.get_term_list()
-            msg = f'Document {docId} contains {len(terms)} terms and have total {doc.getDocLen()} words\n'
-            file.write(msg)
-            for term, freq in terms.items():
-                msg1 = f'{term} : {freq}\n' 
-                file.write(msg1)
-            file.write("\n")
-        file.close()
-        return
+    # def print_and_save(self):
+    #     file = open(outputFolder, "w")
+    #     for docId, doc in self.collections.items():
+    #         terms = doc.get_term_list()
+    #         msg = f'Document {docId} contains {len(terms)} terms and have total {doc.getDocLen()} words\n'
+    #         file.write(msg)
+    #         for term, freq in terms.items():
+    #             msg1 = f'{term} : {freq}\n' 
+    #             file.write(msg1)
+    #         file.write("\n")
+    #     file.close()
+    #     return
 
 # parsing a query
 def parse_query(query):
