@@ -38,7 +38,7 @@ def jm_lm(coll, word_freq, df):
 
     for docId, doc in coll.get_coll().items():
         termFreq = doc.get_term_list()
-        score = 0
+        scores[docId] = 1
         D = len(termFreq)
         Data_Cx = len(df)
 
@@ -48,8 +48,7 @@ def jm_lm(coll, word_freq, df):
 
             val = ((1-lambda_)*f_qi_D/D) + (lambda_*c_qi/Data_Cx)
             if val != 0:
-                score *= val
-        scores[docId] = score
+                scores[docId] *= val
     return scores
 
 
@@ -125,6 +124,6 @@ if __name__ == "__main__":
 
             # calculate Pseudo-Relevance model score for respective data collection
             # my_prm_scores = my_prm(collections, word_freq, df)
-            print_save_score(coll_num, queries[coll_num], bm25_scores, "PRM")
+            # print_save_score(coll_num, queries[coll_num], bm25_scores, "PRM")
 
     print("Completed!! the ranking scores are saved in RankingOutputs folder ")
