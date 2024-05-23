@@ -2,9 +2,7 @@
 The query is: China Pakistan nuclear missile
 The following are the MY_PRM score for R121 document:
 
-3885 0.5207640601475721
-7289 0.41807194949461957
-37711 0.14626960018205312
+37711 0.9666640622611566
 17857 0.0
 18345 0.0
 47899 0.0
@@ -63,6 +61,7 @@ The following are the MY_PRM score for R121 document:
 59764 0.0
 31141 0.0
 13294 0.0
+3885 0.0
 33391 0.0
 13518 0.0
 71564 0.0
@@ -80,6 +79,7 @@ The following are the MY_PRM score for R121 document:
 16992 0.0
 75560 0.0
 81408 0.0
+7289 0.0
 10675 0.0
 42245 0.0
 13221 0.0

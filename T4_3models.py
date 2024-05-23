@@ -1,4 +1,5 @@
 import math, os
+from collections import Counter
 import T0_ParsingFiles as parse
 
 # Calculate doc ranking using BM25-based IR Model
@@ -52,17 +53,49 @@ def jm_lm(coll, word_freq, df):
     return scores
 
 
+# Re-ranking documents using the query frequency.
+def rerank_documents(coll, word_freq, df):
+    scores = bm25(coll, word_freq, df)
+    return scores
+
+# Selecting top-k documents as pseudo-relevant for a query 
+def select_top_k_documents(scores, k):
+    sorted_docs = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    return [doc_id for doc_id, score in sorted_docs[:k]]
+
+# Expanding the query using terms from the top-k documents
+def expand_query(top_k_docs, collection, top_terms_count):
+    term_counter = Counter()
+    for doc_id in top_k_docs:
+        terms = collection[doc_id].get_term_list()
+        term_counter.update(terms)
+    
+    # Select top terms_count terms to add to the query
+    significant_terms = dict()  #[term for term, count in term_counter.most_common(top_terms_count)]
+    for term, count in term_counter.most_common(top_terms_count):
+        significant_terms[term] = count
+    return significant_terms
+
 # Calcualte doc ranking using Pseudo-Relevance Model
 def my_prm(coll, word_freq, df):
-    scores = {}
+    # Number of top documents to consider as pseudo-relevant
+    k = 15
+    # Number of significant terms to select for query expansion
+    top_terms_count = 3
 
-    for docId, doc in coll.get_coll().items():
-        termFreq = doc.get_term_list()
-        scores[docId] = 0
+    # using BM25 algorithm for initial retrieval
+    initial_scores = bm25(coll, word_freq, df)
 
-        for word_i, qfi in word_freq.items():
-            scores[docId] += (0)
-    return scores
+    # Select top-k documents
+    top_k_docs = select_top_k_documents(initial_scores, k)
+
+    # Expand query
+    expanded_terms = expand_query(top_k_docs, coll.get_coll(), top_terms_count)
+        
+    # Re-rank documents
+    reranked_scores = rerank_documents(coll, expanded_terms, df)
+
+    return reranked_scores
 
 
 def print_save_score(docNum, query, bm25_scores, model):
@@ -115,15 +148,15 @@ if __name__ == "__main__":
 
             # calculate BM25-IR model score for respective data collection
             # print(f"Calculating BM25-IR ranking scores for {folder} data collection")
-            bm25_scores = bm25(collections, word_freq, df)
-            print_save_score(coll_num, queries[coll_num], bm25_scores, "BM")
+            # bm25_scores = bm25(collections, word_freq, df)
+            # print_save_score(coll_num, queries[coll_num], bm25_scores, "BM")
 
             # calculate Jelinek-Mercer model score for respective data collection
-            jm_lm_scores = jm_lm(collections, word_freq, df)
-            print_save_score(coll_num, queries[coll_num], jm_lm_scores, "JM_LM")
+            # jm_lm_scores = jm_lm(collections, word_freq, df)
+            # print_save_score(coll_num, queries[coll_num], jm_lm_scores, "JM_LM")
 
             # calculate Pseudo-Relevance model score for respective data collection
-            # my_prm_scores = my_prm(collections, word_freq, df)
-            # print_save_score(coll_num, queries[coll_num], bm25_scores, "PRM")
+            my_prm_scores = my_prm(collections, word_freq, df)
+            print_save_score(coll_num, queries[coll_num], my_prm_scores, "PRM")
 
     print("Completed!! the ranking scores are saved in RankingOutputs folder ")
