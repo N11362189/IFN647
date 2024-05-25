@@ -2,8 +2,6 @@
 The query is: Child custody cases
 The following are the MY_PRM score for R109 document:
 
-23398 13.473112864264618
-73598 13.217908002377587
 25832 0.0
 75624 0.0
 17498 0.0
@@ -17,6 +15,7 @@ The following are the MY_PRM score for R109 document:
 55187 0.0
 58676 0.0
 15776 0.0
+23398 0.0
 29729 0.0
 24340 0.0
 59340 0.0
@@ -30,6 +29,7 @@ The following are the MY_PRM score for R109 document:
 56519 0.0
 51841 0.0
 68812 0.0
+73598 0.0
 62293 0.0
 58651 0.0
 56735 0.0

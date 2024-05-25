@@ -79,9 +79,9 @@ def expand_query(top_k_docs, collection, top_terms_count):
 # Calcualte doc ranking using Pseudo-Relevance Model
 def my_prm(coll, word_freq, df):
     # Number of top documents to consider as pseudo-relevant
-    k = 15
+    k = 25
     # Number of significant terms to select for query expansion
-    top_terms_count = 3
+    top_terms_count = len(word_freq)
 
     # using BM25 algorithm for initial retrieval
     initial_scores = bm25(coll, word_freq, df)

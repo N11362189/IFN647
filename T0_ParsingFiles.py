@@ -10,7 +10,8 @@ def get_stop_words(filepath):
 
 stop_words = get_stop_words("common-english-words.txt")
 queryfile = "./the50Queries.txt"
-outputFolder = "./RankingOutputs"
+output_folder = "./RankingOutputs"
+benchmark_folder = "./EvaluationBenchmark"
 data_collection_folder = "./Data_Collection"
 
 class DataDoc:
@@ -115,6 +116,21 @@ def parse_queryfile():
             i += 1
 
     return queries
+
+# parsing evaluation benchmark folder
+def evaluation_benchmark():
+    colls_bnk = dict()
+    folders = [folder for folder in os.listdir(benchmark_folder)]
+
+    for folder in folders:
+        coll_bnk = dict()
+        file = open(benchmark_folder + "/" + folder).readlines()
+        for line in file:
+            coll, docID, val = line.strip().split(" ")
+            coll_bnk[docID] = int(val)
+        colls_bnk[coll[1:]] = coll_bnk
+        
+    return colls_bnk
 
 # parsing documents in a collection
 def parse_collection(inputpath):

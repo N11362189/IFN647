@@ -2,9 +2,8 @@
 The query is: Anti-rejection transplant drugs
 The following are the MY_PRM score for R133 document:
 
-81694 1.2301581794502847
-48566 1.009767537780599
-62586 0.4605487403230372
+48566 1.2351620774637686
+62586 0.5633497984308581
 82290 0.0
 28126 0.0
 5650 0.0
@@ -31,6 +30,7 @@ The following are the MY_PRM score for R133 document:
 64967 0.0
 10759 0.0
 6939 0.0
+81694 0.0
 32662 0.0
 86304 0.0
 84398 0.0
