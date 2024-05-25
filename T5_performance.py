@@ -30,7 +30,7 @@ def compare_avg_precision(colls_bnks):
         prm = parse.read_output_file('MY_PRM_R' + collId + 'Ranking.dat')
         
         bm25_prc, jmlm_prc, prm_prc = coll_avg_prc(bnk, bm25, jm_lm, prm)
-        response.append({'Topic':collId, 
+        response.append({'Topic':'R'+collId, 
                     'BM25':bm25_prc,
                     'JM_LM':jmlm_prc,
                     'My_PRM':prm_prc})
@@ -38,7 +38,7 @@ def compare_avg_precision(colls_bnks):
     # create table to store the precision values for each topic/collection
     avg_prc_df = pd.DataFrame(response).sort_values(by='Topic')
     # calculating the average precision (MAP) for the data collection
-    avg_df = pd.DataFrame([{'Topic':'Average', 
+    avg_df = pd.DataFrame([{'Topic':'MAP', 
                            'BM25': avg_prc_df['BM25'].mean(),
                             'JM_LM': avg_prc_df['JM_LM'].mean(),
                             'My_PRM': avg_prc_df['My_PRM'].mean()}])
