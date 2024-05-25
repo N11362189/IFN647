@@ -65,6 +65,10 @@ if __name__ == "__main__":
 
     # calculating performance of 3 models on precision@10
     # prc10_df = compare_precision10(colls_benchmarks)
+    # print("\n The performance of 3 models on precision@10\n")
+    # print(prc10_df)
 
     # calculating performance of 3 models on DCG10
     # dcg10_df = compare_dcg10(colls_benchmarks)
+    # print("\n The performance of 3 models on DCG10\n")
+    # print(dcg10_df)
