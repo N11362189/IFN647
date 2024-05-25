@@ -1,6 +1,7 @@
 import T0_ParsingFiles as parse
 import pandas as pd
 
+# calculate the avg precision of a single collection
 def avg_precision(bnk, ranks):
     ri = 0
     map1 = 0.0
@@ -14,6 +15,7 @@ def avg_precision(bnk, ranks):
             # print("At position " + str(int(n)) + ", precision= " + str(pi) + ", recall= " + str(recall))
     return map1/float(ri)
 
+# calculate the avg precision for all 3 models of a single collection
 def coll_avg_prc(bnk, bm25, jm_lm, prm):
     return avg_precision(bnk, bm25), avg_precision(bnk, jm_lm), avg_precision(bnk, prm)
 
