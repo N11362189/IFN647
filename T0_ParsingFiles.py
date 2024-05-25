@@ -117,21 +117,6 @@ def parse_queryfile():
 
     return queries
 
-# parsing evaluation benchmark folder
-def evaluation_benchmark():
-    colls_bnk = dict()
-    folders = [folder for folder in os.listdir(benchmark_folder)]
-
-    for folder in folders:
-        coll_bnk = dict()
-        file = open(benchmark_folder + "/" + folder).readlines()
-        for line in file:
-            coll, docID, val = line.strip().split(" ")
-            coll_bnk[docID] = int(val)
-        colls_bnk[coll[1:]] = coll_bnk
-        
-    return colls_bnk
-
 # parsing documents in a collection
 def parse_collection(inputpath):
     coll = DataColl()
@@ -188,3 +173,40 @@ def avg_length(coll):
     avg_length = coll.getTotalDocLen()/coll.getNumOfDocs()
     coll.setAvgDocLen(avg_length)
     return avg_length
+
+# reading evaluation benchmark folder
+def evaluation_benchmark():
+    colls_bnk = dict()
+    files = [folder for folder in os.listdir(benchmark_folder)]
+
+    for file in files:
+        coll_bnk = dict()
+        content = open(benchmark_folder + "/" + file).readlines()
+        for line in content:
+            coll, docID, val = line.strip().split(" ")
+            coll_bnk[docID] = float(val)
+        colls_bnk[coll[1:]] = coll_bnk
+        
+    return colls_bnk
+
+# reading ranking output files
+def read_rankingOutputs():
+    filenames = []
+    files = [folder for folder in os.listdir(output_folder)]
+    for file in files:
+        filenames.append(output_folder + "/" + file)
+    return filenames
+
+def read_output_file(filename):
+    ranks={}
+    flag, i = 1, 1
+    
+    for line in open(output_folder + "/" + filename):
+        if flag > 4:
+            line = line.strip()
+            line1 = line.split()
+            ranks[str(i)] = line1[0]
+            i = i + 1
+        else:
+            flag += 1
+    return ranks
