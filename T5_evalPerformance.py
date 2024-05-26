@@ -1,5 +1,6 @@
 import T0_ParsingFiles as parse
 import pandas as pd
+import math
 
 # calculate the avg precision of a single collection
 def avg_precision(bnk, ranks):
@@ -94,14 +95,17 @@ def compare_precision_at_10(colls_bnks):
 # calculate Discounted Cumulative Gain at 10th posistion for a single collection
 def dcg_at_10(bnk, ranks, k=10):
     """
-    Calculate DCG@k
+    Calculate DCG@10
     """
     dcg = 0.0
     for i, (n, doc_id) in enumerate(sorted(ranks.items(), key=lambda x: int(x[0]))):
         if i >= k:
             break
         if bnk[doc_id] > 0:
-            dcg += 1.0 / (i + 1)  # Using position i+1 for log base 2 denominator
+            if i == 0:  # The first position
+                dcg += bnk[doc_id]
+            else:
+                dcg += bnk[doc_id] / math.log2(i + 1)  # i + 1 because log2(1) is defined as 0
     return dcg
 
 # calculate DCG at rank posistion 10 for all 3 models of a single collection
@@ -151,12 +155,12 @@ if __name__ == "__main__":
     prc10_df = compare_precision_at_10(colls_benchmarks)
     print("\n The performance of 3 models on precision@10\n")
     # Saving the average precision to a CSV file
-    avg_prc_df.to_csv('T5_Precision10.csv', index=False)
+    prc10_df.to_csv('T5_Precision10.csv', index=False)
     print(prc10_df)
 
     # calculating performance of 3 models using DCG10
     dcg10_df = compare_dcg_at_10(colls_benchmarks)
     print("\n The performance of 3 models on DCG10\n")
     # Saving the average precision to a CSV file
-    avg_prc_df.to_csv('T5_DCG10.csv', index=False)
+    dcg10_df.to_csv('T5_DCG10.csv', index=False)
     print(dcg10_df)
