@@ -3,6 +3,9 @@ import pandas as pd
 
 # calculate the avg precision of a single collection
 def avg_precision(bnk, ranks):
+    """
+    Calculate Average Precision (AP)
+    """
     ri = 0
     map1 = 0.0
     # R = len([id for (id,v) in bnk.items() if v>0])
@@ -19,7 +22,7 @@ def avg_precision(bnk, ranks):
 def coll_avg_prc(bnk, bm25, jm_lm, prm):
     return avg_precision(bnk, bm25), avg_precision(bnk, jm_lm), avg_precision(bnk, prm)
 
-# calculating the performance of 3 models on average precision(MAP)
+# calculating the performance of 3 models using average precision(MAP)
 def compare_avg_precision(colls_bnks):
     response = []
 
@@ -45,12 +48,38 @@ def compare_avg_precision(colls_bnks):
     avg_prc_df = pd.concat([avg_prc_df, avg_df], ignore_index=True)
     return avg_prc_df
 
-def precision10():
-    return
+# calculate the average precision at 10th posistion for a single collection
+def precision_at_10(bnk, ranks, k=10):
+    """
+    Calculate Precision@10
+    """
+    relevant_count = 0
+    for i, (n, doc_id) in enumerate(sorted(ranks.items(), key=lambda x: int(x[0]))):
+        if i >= k:
+            break
+        if bnk[doc_id] > 0:
+            relevant_count += 1
+    return relevant_count / k
 
-# calculating the performance of 3 models on precision@10
-def compare_precision10(colls_bnks):
+# calculate the avg precision for all 3 models of a single collection
+def coll_precision_at_10(bnk, bm25, jm_lm, prm):
+    return precision_at_10(bnk, bm25), precision_at_10(bnk, jm_lm), precision_at_10(bnk, prm)
+
+# calculating the performance of 3 models using precision@10
+def compare_precision_at_10(colls_bnks):
     response = []
+
+    # calculating precision at 10 for each collection
+    for collId, bnk in colls_bnks.items():
+        bm25 = parse.read_output_file('BM25_R' + collId + 'Ranking.dat')
+        jm_lm = parse.read_output_file('JM_LM_R' + collId + 'Ranking.dat')
+        prm = parse.read_output_file('MY_PRM_R' + collId + 'Ranking.dat')
+        
+        bm25_prc, jmlm_prc, prm_prc = coll_precision_at_10(bnk, bm25, jm_lm, prm)
+        response.append({'Topic':'R'+collId, 
+                    'BM25':bm25_prc,
+                    'JM_LM':jmlm_prc,
+                    'My_PRM':prm_prc})
     
     # create table to store the precision values for each topic/collection
     prc10_df = pd.DataFrame(response).sort_values(by='Topic')
@@ -62,11 +91,39 @@ def compare_precision10(colls_bnks):
     prc10_df = pd.concat([prc10_df, avg_df], ignore_index=True)
     return prc10_df
 
+# calculate Discounted Cumulative Gain at 10th posistion for a single collection
+def dcg_at_10(bnk, ranks, k=10):
+    """
+    Calculate DCG@k
+    """
+    dcg = 0.0
+    for i, (n, doc_id) in enumerate(sorted(ranks.items(), key=lambda x: int(x[0]))):
+        if i >= k:
+            break
+        if bnk[doc_id] > 0:
+            dcg += 1.0 / (i + 1)  # Using position i+1 for log base 2 denominator
+    return dcg
 
-# calculating the performance of 3 models on DCG10
-def compare_dcg10(colls_bnks):
+# calculate DCG at rank posistion 10 for all 3 models of a single collection
+def coll_dcg_at_10(bnk, bm25, jm_lm, prm):
+    return dcg_at_10(bnk, bm25), dcg_at_10(bnk, jm_lm), dcg_at_10(bnk, prm)
+
+# calculating the performance of 3 models using DCG10
+def compare_dcg_at_10(colls_bnks):
     response = []
     
+    # calculating precision at 10 for each collection
+    for collId, bnk in colls_bnks.items():
+        bm25 = parse.read_output_file('BM25_R' + collId + 'Ranking.dat')
+        jm_lm = parse.read_output_file('JM_LM_R' + collId + 'Ranking.dat')
+        prm = parse.read_output_file('MY_PRM_R' + collId + 'Ranking.dat')
+        
+        bm25_prc, jmlm_prc, prm_prc = coll_dcg_at_10(bnk, bm25, jm_lm, prm)
+        response.append({'Topic':'R'+collId, 
+                    'BM25':bm25_prc,
+                    'JM_LM':jmlm_prc,
+                    'My_PRM':prm_prc})
+
     # create table to store the precision values for each topic/collection
     dcg10_df = pd.DataFrame(response).sort_values(by='Topic')
     # calculating the average precision (MAP) for the data collection
@@ -84,16 +141,16 @@ if __name__ == "__main__":
     colls_benchmarks = parse.evaluation_benchmark()
 
     # calculating performance of 3 models on average precision(MAP)
-    # avg_prc_df = compare_avg_precision(colls_benchmarks)
-    # print("\nThe performance of 3 models on average precision (MAP)\n")
-    # print(avg_prc_df)
+    avg_prc_df = compare_avg_precision(colls_benchmarks)
+    print("\nThe performance of 3 models on average precision (MAP)\n")
+    print(avg_prc_df)
 
     # calculating performance of 3 models on precision@10
-    prc10_df = compare_precision10(colls_benchmarks)
+    prc10_df = compare_precision_at_10(colls_benchmarks)
     print("\n The performance of 3 models on precision@10\n")
     print(prc10_df)
 
     # calculating performance of 3 models on DCG10
-    # dcg10_df = compare_dcg10(colls_benchmarks)
-    # print("\n The performance of 3 models on DCG10\n")
-    # print(dcg10_df)
+    dcg10_df = compare_dcg_at_10(colls_benchmarks)
+    print("\n The performance of 3 models on DCG10\n")
+    print(dcg10_df)
