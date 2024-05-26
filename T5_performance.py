@@ -45,11 +45,11 @@ def compare_avg_precision(colls_bnks):
     avg_prc_df = pd.concat([avg_prc_df, avg_df], ignore_index=True)
     return avg_prc_df
 
-def precision10():
+# def precision10():
     return
 
 # calculating the performance of 3 models on precision@10
-def compare_precision10(colls_bnks):
+# def compare_precision10(colls_bnks):
     response = []
     
     # create table to store the precision values for each topic/collection
@@ -64,7 +64,7 @@ def compare_precision10(colls_bnks):
 
 
 # calculating the performance of 3 models on DCG10
-def compare_dcg10(colls_bnks):
+# def compare_dcg10(colls_bnks):
     response = []
     
     # create table to store the precision values for each topic/collection
@@ -84,14 +84,14 @@ if __name__ == "__main__":
     colls_benchmarks = parse.evaluation_benchmark()
 
     # calculating performance of 3 models on average precision(MAP)
-    # avg_prc_df = compare_avg_precision(colls_benchmarks)
-    # print("\nThe performance of 3 models on average precision (MAP)\n")
-    # print(avg_prc_df)
-
+    avg_prc_df = compare_avg_precision(colls_benchmarks)
+    print("\nThe performance of 3 models on average precision (MAP)\n")
+    print(avg_prc_df)
+    avg_prc_df.to_csv('avg_prc_df.csv')
     # calculating performance of 3 models on precision@10
-    prc10_df = compare_precision10(colls_benchmarks)
-    print("\n The performance of 3 models on precision@10\n")
-    print(prc10_df)
+    # prc10_df = compare_precision10(colls_benchmarks)
+    # print("\n The performance of 3 models on precision@10\n")
+    # print(prc10_df)
 
     # calculating performance of 3 models on DCG10
     # dcg10_df = compare_dcg10(colls_benchmarks)
