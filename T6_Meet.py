@@ -2,11 +2,8 @@ import numpy as np
 from scipy.stats import ttest_rel, ttest_ind
 import pandas as pd
 
-# evaluating t-test for different models
-def t_test_eval(bm25_results, jm_lm_results, my_prm_results):
-    #different measures
-    measures = ['AP', 'DCG10', 'PRC10']
-    #comparision of the models
+def perform_t_tests(bm25_results, jm_lm_results, my_prm_results):
+    measures = ['AP']
     comparisons = [
         ('BM25', 'JM_LM', bm25_results, jm_lm_results),
         ('BM25', 'My_PRM', bm25_results, my_prm_results),
@@ -26,25 +23,21 @@ def t_test_eval(bm25_results, jm_lm_results, my_prm_results):
 
 
 if __name__ == "__main__":
-    avg_prc = pd.read_csv("T5_AvgPrecision.csv", header=[0])
-    dcg10 = pd.read_csv("T5_DCG10.csv", header=[0])
-    precision10 = pd.read_csv("T5_Precision10.csv", header=[0])
+    avg_prc = pd.read_csv("avg_prc_df.csv", header=[0])
+    print(avg_prc)
 
     bm25_data = {}
     jm_lm_data = {}
     my_prm_data = {}
-    
-    measures = ['AP', 'DCG10', 'PRC10']
-    measure_data = [avg_prc, dcg10, precision10]
-    # creating dictionaries with measures data frm different csv files of task 5
-    for i in range(0, len(measures)):
-            bm25_data[measures[i]] = pd.to_numeric(measure_data[i]["BM25"]).to_list()
-            jm_lm_data[measures[i]] = pd.to_numeric(measure_data[i]["JM_LM"]).to_list()
-            my_prm_data[measures[i]] = pd.to_numeric(measure_data[i]["My_PRM"]).to_list()
 
-    t_test_results = t_test_eval(bm25_data, jm_lm_data, my_prm_data)
-    
-    # print result of t-test
+    bm25_data["AP"] = pd.to_numeric(avg_prc["BM25"]).to_list()
+    jm_lm_data["AP"] = pd.to_numeric(avg_prc["JM_LM"]).to_list()
+    my_prm_data["AP"] = pd.to_numeric(avg_prc["My_PRM"]).to_list()
+
+    # print(bm25_data["AP"])
+
+    t_test_results = perform_t_tests(bm25_data, jm_lm_data, my_prm_data)
+
     for measure, results in t_test_results.items():
         print(f"\nT-test results for {measure}:")
         for comparison, (t_stat, p_value) in results.items():
