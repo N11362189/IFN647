@@ -140,17 +140,23 @@ if __name__ == "__main__":
     # reading evaluation benmarks folder
     colls_benchmarks = parse.evaluation_benchmark()
 
-    # calculating performance of 3 models on average precision(MAP)
+    # calculating performance of 3 models using average precision(MAP)
     avg_prc_df = compare_avg_precision(colls_benchmarks)
     print("\nThe performance of 3 models on average precision (MAP)\n")
+    # Saving the average precision to a CSV file
+    avg_prc_df.to_csv('T5_AvgPrecision.csv', index=False)
     print(avg_prc_df)
 
-    # calculating performance of 3 models on precision@10
+    # calculating performance of 3 models using precision@10
     prc10_df = compare_precision_at_10(colls_benchmarks)
     print("\n The performance of 3 models on precision@10\n")
+    # Saving the average precision to a CSV file
+    avg_prc_df.to_csv('T5_Precision10.csv', index=False)
     print(prc10_df)
 
-    # calculating performance of 3 models on DCG10
+    # calculating performance of 3 models using DCG10
     dcg10_df = compare_dcg_at_10(colls_benchmarks)
     print("\n The performance of 3 models on DCG10\n")
+    # Saving the average precision to a CSV file
+    avg_prc_df.to_csv('T5_DCG10.csv', index=False)
     print(dcg10_df)
