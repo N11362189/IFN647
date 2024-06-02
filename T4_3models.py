@@ -79,7 +79,7 @@ def expand_query(top_k_docs, collection, top_terms_count):
 # Calcualte doc ranking using Pseudo-Relevance Model
 def my_prm(coll, word_freq, df):
     # Number of top documents to consider as pseudo-relevant
-    k = 25
+    k = 15
     # Number of significant terms to select for query expansion
     top_terms_count = len(word_freq)
 
@@ -100,14 +100,14 @@ def my_prm(coll, word_freq, df):
 
 def print_save_score(docNum, query, bm25_scores, model):
     if "BM" in model:
-        output_filepath = parse.outputFolder + "/BM25_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the BM25 score for R{docNum} document:\n\n'
+        output_filepath = parse.output_folder + "/BM25_R"+ docNum + "Ranking.dat"
+        t1_msg = f'\nThe query is: {query}\nThe following are the BM25 score for R{docNum} document:\n'
     elif "JM_LM" in model:
-        output_filepath = parse.outputFolder + "/JM_LM_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the JM_LM score for R{docNum} document:\n\n'
+        output_filepath = parse.output_folder + "/JM_LM_R"+ docNum + "Ranking.dat"
+        t1_msg = f'\nThe query is: {query}\nThe following are the JM_LM score for R{docNum} document:\n'
     else:
-        output_filepath = parse.outputFolder + "/MY_PRM_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the MY_PRM score for R{docNum} document:\n\n'
+        output_filepath = parse.output_folder + "/MY_PRM_R"+ docNum + "Ranking.dat"
+        t1_msg = f'\nThe query is: {query}\nThe following are the MY_PRM score for R{docNum} document:\n'
 
     file = open(output_filepath, "w")
     print(t1_msg, end = "")

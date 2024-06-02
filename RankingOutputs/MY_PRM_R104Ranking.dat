@@ -1,14 +1,6 @@
 
 The query is: Rescue of kidnapped children
 The following are the MY_PRM score for R104 document:
-
-27966 914.536222219143
-22961 913.8766748834951
-31141 912.1974336260749
-7937 911.9717382000143
-6635 911.3833238711288
-19634 219.21250696166527
-9591 107.17086264128602
 46832 0.0
 21895 0.0
 44758 0.0
@@ -32,6 +24,7 @@ The following are the MY_PRM score for R104 document:
 75949 0.0
 5862 0.0
 28657 0.0
+22961 0.0
 65394 0.0
 42529 0.0
 12479 0.0
@@ -52,6 +45,7 @@ The following are the MY_PRM score for R104 document:
 38442 0.0
 73641 0.0
 36447 0.0
+9591 0.0
 13313 0.0
 67280 0.0
 73746 0.0
@@ -121,6 +115,7 @@ The following are the MY_PRM score for R104 document:
 26611 0.0
 29913 0.0
 17619 0.0
+19634 0.0
 11485 0.0
 26598 0.0
 19224 0.0
@@ -144,6 +139,7 @@ The following are the MY_PRM score for R104 document:
 71001 0.0
 3265 0.0
 64626 0.0
+31141 0.0
 27870 0.0
 73762 0.0
 14707 0.0
@@ -173,6 +169,7 @@ The following are the MY_PRM score for R104 document:
 73706 0.0
 20160 0.0
 44237 0.0
+6635 0.0
 20766 0.0
 28662 0.0
 16954 0.0
@@ -184,6 +181,7 @@ The following are the MY_PRM score for R104 document:
 3827 0.0
 13342 0.0
 15082 0.0
+7937 0.0
 9703 0.0
 64645 0.0
 54745 0.0
@@ -195,4 +193,5 @@ The following are the MY_PRM score for R104 document:
 51210 0.0
 20199 0.0
 33668 0.0
+27966 0.0
 26113 0.0

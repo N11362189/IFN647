@@ -24,7 +24,6 @@ def t_test_eval(bm25_results, jm_lm_results, my_prm_results):
     return t_test_results
 
 
-
 if __name__ == "__main__":
     avg_prc = pd.read_csv("T5_AvgPrecision.csv", header=[0])
     dcg10 = pd.read_csv("T5_DCG10.csv", header=[0])
