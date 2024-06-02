@@ -147,13 +147,12 @@ if __name__ == "__main__":
             word_freq = parse.parse_query(queries[coll_num])
 
             # calculate BM25-IR model score for respective data collection
-            # print(f"Calculating BM25-IR ranking scores for {folder} data collection")
-            # bm25_scores = bm25(collections, word_freq, df)
-            # print_save_score(coll_num, queries[coll_num], bm25_scores, "BM")
+            bm25_scores = bm25(collections, word_freq, df)
+            print_save_score(coll_num, queries[coll_num], bm25_scores, "BM")
 
             # calculate Jelinek-Mercer model score for respective data collection
-            # jm_lm_scores = jm_lm(collections, word_freq, df)
-            # print_save_score(coll_num, queries[coll_num], jm_lm_scores, "JM_LM")
+            jm_lm_scores = jm_lm(collections, word_freq, df)
+            print_save_score(coll_num, queries[coll_num], jm_lm_scores, "JM_LM")
 
             # calculate Pseudo-Relevance model score for respective data collection
             my_prm_scores = my_prm(collections, word_freq, df)
