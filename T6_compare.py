@@ -8,17 +8,27 @@ def t_test_eval(bm25_results, jm_lm_results, my_prm_results):
     measures = ['AP', 'DCG10', 'PRC10']
     #comparision of the models
     comparisons = [
-        ('BM25', 'JM_LM', bm25_results, jm_lm_results),
-        ('BM25', 'My_PRM', bm25_results, my_prm_results),
-        ('JM_LM', 'My_PRM', jm_lm_results, my_prm_results)
+        ('BM25', 'JM_LM', bm25_results, jm_lm_results, "greater"),
+        ('BM25', 'My_PRM', bm25_results, my_prm_results, "less"),
+        ('JM_LM', 'My_PRM', jm_lm_results, my_prm_results, "less")
     ]
     
     t_test_results = {}
     
     for measure in measures:
         t_test_results[measure] = {}
-        for model1, model2, res1, res2 in comparisons:
+        for model1, model2, res1, res2, alt in comparisons:
             t_stat, p_value = ttest_rel(res1[measure], res2[measure])
+            if alt == 'greater':
+                if t_stat > 0:
+                    t_stat, p_value = t_stat, p_value / 2
+                else:
+                    t_stat, p_value = t_stat, 1 - p_value / 2
+            elif alt == 'less':
+                if t_stat < 0:
+                    t_stat, p_value = t_stat, p_value / 2
+                else:
+                    t_stat, p_value = t_stat, 1 - p_value / 2
             t_test_results[measure][f'{model1} vs {model2}'] = (t_stat, p_value)
     
     return t_test_results
