@@ -159,3 +159,4 @@ if __name__ == "__main__":
             print_save_score(coll_num, queries[coll_num], my_prm_scores, "PRM")
 
     print("Completed!! the ranking scores are saved in RankingOutputs folder ")
+    
