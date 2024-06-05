@@ -1,5 +1,5 @@
 import math, os
-from collections import Counter
+from collections import defaultdict, Counter
 import T0_ParsingFiles as parse
 
 # Calculate doc ranking using BM25-based IR Model
@@ -52,67 +52,91 @@ def jm_lm(coll, word_freq, df):
                 scores[docId] *= val
     return scores
 
+# KL-divergence calculation for PRM
+def calculate_kl_divergence(relevance_model, document_model):
+    kl_divergence = 0.0
+    for word in relevance_model:
+        if word in document_model and document_model[word] > 0:
+            kl_divergence += relevance_model[word] * math.log(relevance_model[word] / document_model[word])
+    return -kl_divergence  # Use negative KL-divergence for ranking
 
-# Re-ranking documents using the query frequency.
-def rerank_documents(coll, word_freq, df):
-    scores = bm25(coll, word_freq, df)
-    return scores
+# Estimate relevance model from top-k documents
+def estimate_relevance_model(query, top_k_documents):
+    relevance_model = defaultdict(float)
+    total_words = sum(len(doc) for doc in top_k_documents)
+    word_counts = Counter()
 
-# Selecting top-k documents as pseudo-relevant for a query 
-def select_top_k_documents(scores, k):
-    sorted_docs = sorted(scores.items(), key=lambda item: item[1], reverse=True)
-    return [doc_id for doc_id, score in sorted_docs[:k]]
+    for doc in top_k_documents:
+        word_counts.update(doc)
 
-# Expanding the query using terms from the top-k documents
-def expand_query(top_k_docs, collection, top_terms_count):
-    term_counter = Counter()
-    for doc_id in top_k_docs:
-        terms = collection[doc_id].get_term_list()
-        term_counter.update(terms)
-    
-    # Select top terms_count terms to add to the query
-    significant_terms = dict()  #[term for term, count in term_counter.most_common(top_terms_count)]
-    for term, count in term_counter.most_common(top_terms_count):
-        significant_terms[term] = count
-    return significant_terms
+    for word in word_counts:
+        relevance_model[word] = word_counts[word] / total_words
 
-# Calcualte doc ranking using Pseudo-Relevance Model
-def my_prm(coll, word_freq, df):
-    # Number of top documents to consider as pseudo-relevant
-    k = 15
-    # Number of significant terms to select for query expansion
-    top_terms_count = len(word_freq)
+    return relevance_model
 
-    # using BM25 algorithm for initial retrieval
+# Calculate document language model
+def calculate_document_language_model(document):
+    doc_model = defaultdict(float)
+    doc_length = len(document)
+    word_counts = Counter(document)
+
+    for word in word_counts:
+        doc_model[word] = word_counts[word] / doc_length
+
+    return doc_model
+
+# Estimate relevance model from top-k documents
+def estimate_relevance_model(query, top_k_documents):
+    relevance_model = defaultdict(float)
+    total_words = sum(len(doc) for doc in top_k_documents)
+    word_counts = Counter()
+
+    for doc in top_k_documents:
+        word_counts.update(doc)
+
+    for word in word_counts:
+        relevance_model[word] = word_counts[word] / total_words
+
+    return relevance_model
+
+# PRM using KL-divergence
+def prm_kl_divergence(coll, word_freq, df, top_k=10):
+    # Initial retrieval using BM25
     initial_scores = bm25(coll, word_freq, df)
-
-    # Select top-k documents
-    top_k_docs = select_top_k_documents(initial_scores, k)
-
-    # Expand query
-    expanded_terms = expand_query(top_k_docs, coll.get_coll(), top_terms_count)
-        
-    # Re-rank documents
-    reranked_scores = rerank_documents(coll, expanded_terms, df)
-
-    return reranked_scores
+    
+    # Get top-k documents based on initial BM25 scores
+    top_k_docs = sorted(initial_scores, key=initial_scores.get, reverse=True)[:top_k]
+    top_k_documents = [coll.get_coll()[doc_id].get_term_list() for doc_id in top_k_docs]
+    
+    # Estimate relevance model from top-k documents
+    relevance_model = estimate_relevance_model(word_freq, top_k_documents)
+    
+    # Rank documents using KL-divergence
+    document_scores = {}
+    for docId, doc in coll.get_coll().items():
+        doc_model = calculate_document_language_model(doc.get_term_list())
+        score = calculate_kl_divergence(relevance_model, doc_model)
+        document_scores[docId] = score
+    
+    return document_scores
 
 
 def print_save_score(docNum, query, bm25_scores, model):
     if "BM" in model:
         output_filepath = parse.output_folder + "/BM25_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the BM25 score for R{docNum} document:\n'
+        t1_msg = f'\nThe query is: {query}\nThe following are the BM25 score for R{docNum} collection:\n'
     elif "JM_LM" in model:
         output_filepath = parse.output_folder + "/JM_LM_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the JM_LM score for R{docNum} document:\n'
+        t1_msg = f'\nThe query is: {query}\nThe following are the JM_LM score for R{docNum} collection:\n'
     else:
         output_filepath = parse.output_folder + "/MY_PRM_R"+ docNum + "Ranking.dat"
-        t1_msg = f'\nThe query is: {query}\nThe following are the MY_PRM score for R{docNum} document:\n'
+        t1_msg = f'\nThe query is: {query}\nThe following are the MY_PRM score for R{docNum} collection:\n'
 
     file = open(output_filepath, "w")
     print(t1_msg, end = "")
     file.write(t1_msg)
 
+    # Display top 15 document which are relevant to the query
     top_flag = 15
     for docId, score in dict(sorted(bm25_scores.items(), key=lambda x:x[1], reverse=True)).items():
         t1_msg = f'{docId} {score}\n'
@@ -128,10 +152,9 @@ def print_save_score(docNum, query, bm25_scores, model):
 if __name__ == "__main__":
     # parse 50 queries and save in dict() collId: {query frequency}
     queries = parse.parse_queryfile()
-    # print(queries)
 
     folders = [folder for folder in os.listdir(parse.data_collection_folder)]
-    for folder in folders:
+    for folder in sorted(folders):
         coll_folderpath = parse.data_collection_folder + "/" + folder
         # check if folder length is 9
         if len(folder) == 9:
@@ -155,8 +178,7 @@ if __name__ == "__main__":
             print_save_score(coll_num, queries[coll_num], jm_lm_scores, "JM_LM")
 
             # calculate Pseudo-Relevance model score for respective data collection
-            my_prm_scores = my_prm(collections, word_freq, df)
+            my_prm_scores = prm_kl_divergence(collections, word_freq, df)
             print_save_score(coll_num, queries[coll_num], my_prm_scores, "PRM")
 
-    print("Completed!! the ranking scores are saved in RankingOutputs folder ")
-    
+    print("\nCompleted!! the ranking scores are saved in RankingOutputs folder ")

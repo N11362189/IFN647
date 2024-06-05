@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     # calculating performance of 3 models using average precision(MAP)
     avg_prc_df = compare_avg_precision(colls_benchmarks)
-    print("\nThe performance of 3 models on average precision (MAP)\n")
+    print("\nThe performance of 3 models on average precision(MAP)\n")
     # Saving the average precision to a CSV file
     avg_prc_df.to_csv('T5_AvgPrecision.csv', index=False)
     print(avg_prc_df)
